@@ -1,0 +1,43 @@
+{
+  "name": "codex-boss",
+  "version": "0.1.0",
+  "description": "Bridge de memoria semantica do time para o Codex CLI: conecta no servidor MCP (native-java, GPU) via HTTP, com auto-recall de contexto e ferramentas de diagnostico. Nao sobe jar local — aponta para o head HTTP da equipe.",
+  "author": {
+    "name": "Allan Santos",
+    "url": "https://github.com/AllanSantos-DV"
+  },
+  "homepage": "https://github.com/AllanSantos-DV/codex-boss",
+  "repository": "https://github.com/AllanSantos-DV/codex-boss",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "mcp",
+    "rag",
+    "recall",
+    "knowledge-base",
+    "codex"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Boss — Memory",
+    "shortDescription": "Memoria semantica do time via servidor MCP GPU",
+    "longDescription": "Conecta o Codex ao servidor de memoria semantica do time (native-java sobre CUDA, modelo granite-embedding). Faz auto-recall de contexto relevante a cada prompt, expoe as ferramentas MCP de busca/gravacao e traz comandos de diagnostico para validar a conexao. Nao sobe processo local: aponta direto para o head HTTP da equipe.",
+    "developerName": "Allan Santos",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/AllanSantos-DV/codex-boss",
+    "defaultPrompt": [
+      "O que o time ja sabe sobre este assunto?",
+      "Recupere o contexto da base sobre InsureMO",
+      "Rode o diagnostico da memoria do time"
+    ],
+    "brandColor": "#10A37F",
+    "composerIcon": "./assets/logo.svg",
+    "logo": "./assets/logo.svg"
+  }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Codex Boss Memory">
+  <rect width="128" height="128" rx="24" fill="#0B1220"/>
+  <circle cx="64" cy="64" r="38" fill="none" stroke="#10A37F" stroke-width="6"/>
+  <path d="M64 30 v68 M30 64 h68" stroke="#10A37F" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="64" cy="64" r="10" fill="#10A37F"/>
+  <circle cx="64" cy="30" r="6" fill="#34D399"/>
+  <circle cx="64" cy="98" r="6" fill="#34D399"/>
+  <circle cx="30" cy="64" r="6" fill="#34D399"/>
+  <circle cx="98" cy="64" r="6" fill="#34D399"/>
+</svg>

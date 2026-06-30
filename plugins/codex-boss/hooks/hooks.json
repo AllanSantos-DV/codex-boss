@@ -1,0 +1,31 @@
+{
+  "description": "Codex Boss — auto-recall da memoria do time e probe de saude. Hooks auto-descobertos (nao declarados no plugin.json, que o validator de marketplace rejeita).",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./scripts/session-start.mjs",
+            "commandWindows": "node ./scripts/session-start.mjs",
+            "timeout": 12,
+            "statusMessage": "Verificando memoria do time..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./scripts/recall.mjs",
+            "commandWindows": "node ./scripts/recall.mjs",
+            "timeout": 15,
+            "statusMessage": "Buscando contexto na memoria do time..."
+          }
+        ]
+      }
+    ]
+  }
+}

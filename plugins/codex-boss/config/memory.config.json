@@ -1,0 +1,18 @@
+{
+  "$comment": "Configuracao do bridge de memoria. Precedencia: variaveis de ambiente > este arquivo > defaults internos. A URL do MCP fica em ../.mcp.json (estatica). Aqui ficam os parametros usados pelos hooks/scripts via REST.",
+  "serverUrl": "http://192.168.18.13:38080",
+  "mcpPath": "/mcp",
+  "projectId": "la-positiva",
+  "recall": {
+    "enabled": true,
+    "topK": 6,
+    "maxChars": 1800,
+    "minQueryChars": 8,
+    "downWarnCooldownMs": 120000
+  },
+  "health": {
+    "timeoutMs": 5000
+  },
+  "timeoutMs": 12000,
+  "bearerTokenEnvVar": "MEMORY_BEARER_TOKEN"
+}

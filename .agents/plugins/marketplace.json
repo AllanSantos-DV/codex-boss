@@ -1,0 +1,19 @@
+{
+  "name": "allansantos-plugins",
+  "interface": {
+    "displayName": "Allan Santos — Plugins"
+  },
+  "plugins": [
+    {
+      "name": "codex-boss",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex-boss"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
