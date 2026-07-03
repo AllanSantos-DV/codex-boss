@@ -36,6 +36,8 @@ const cases = [
   ['session-start.mjs', { hook_event_name: 'SessionStart' }, 'SessionStart (down -> aviso JSON)'],
   ['recall.mjs', { hook_event_name: 'UserPromptSubmit', prompt: 'contexto sobre InsureMO La Positiva' }, 'UserPromptSubmit (down -> aviso/empty JSON)'],
   ['recall.mjs', { hook_event_name: 'UserPromptSubmit', prompt: 'oi' }, 'UserPromptSubmit (prompt curto -> {})'],
+  ['ingest-session.mjs', { hook_event_name: 'Stop', session_id: 's1' }, 'Stop (sem transcript_path -> {})'],
+  ['ingest-session.mjs', { hook_event_name: 'Stop', session_id: 's1', transcript_path: 'Z:\\nao\\existe.jsonl' }, 'Stop (transcript inexistente -> {})'],
 ];
 
 let fail = 0;

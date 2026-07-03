@@ -1,6 +1,6 @@
 {
   "name": "codex-boss",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Bridge de memoria semantica do time para o Codex CLI (conecta no servidor MCP via HTTP).",
   "type": "module",

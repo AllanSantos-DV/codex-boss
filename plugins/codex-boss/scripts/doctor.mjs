@@ -19,7 +19,7 @@
  */
 
 import { loadConfig, mcpUrl } from './lib/config.mjs';
-import { health, getContext, search, listDocuments, serverVersion } from './lib/client.mjs';
+import { health, getContext, search, listDocuments, serverVersion, mcpToolsList } from './lib/client.mjs';
 import { request } from './lib/client.mjs';
 
 function arg(flag, fallback = null) {
@@ -131,6 +131,29 @@ async function runChecks() {
   // versao (informativo)
   const v = await serverVersion(cfg);
   if (v.ok) add('server version', true, preview(v.json));
+
+  // tools MCP expostas + presenca de ingest_conversation (ingestao de sessao)
+  const tl = await mcpToolsList(cfg);
+  if (tl.ok) {
+    const hasIngest = tl.names.includes('ingest_conversation');
+    const hasCompose = tl.names.includes('compose_recall');
+    add(
+      'mcp tools/list',
+      hasIngest,
+      `${tl.names.length} tools | ingest_conversation=${hasIngest ? 'sim' : 'NAO'} | ` +
+        `compose_recall=${hasCompose ? 'sim' : 'nao'} | search_memory=${tl.names.includes('search_memory') ? 'sim' : 'nao'}`,
+    );
+  } else {
+    add('mcp tools/list', false, `nao foi possivel listar tools: ${tl.error || `HTTP ${tl.status}`}`);
+  }
+
+  // nota de escopo: recall do acervo do time e via REST /context (as tools MCP sao project-scoped)
+  add(
+    'nota de recall',
+    true,
+    'acervo do time e servido por /api/v1/context (REST); tools MCP (search_memory/get_context/' +
+      'compose_recall) sao project-scoped e podem vir vazias para o acervo plano — isso e esperado.',
+  );
 
   return { cfg, checks };
 }

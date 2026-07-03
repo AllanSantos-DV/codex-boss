@@ -26,6 +26,19 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./scripts/ingest-session.mjs",
+            "commandWindows": "node ./scripts/ingest-session.mjs",
+            "timeout": 20,
+            "statusMessage": "Registrando a sessao na memoria do time..."
+          }
+        ]
+      }
     ]
   }
 }

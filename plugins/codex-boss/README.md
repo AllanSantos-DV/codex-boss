@@ -31,11 +31,21 @@ flowchart LR
 ```
 
 - **`.mcp.json`** registra o servidor `memory` (transporte streamable HTTP) — o
-  Codex passa a expor as ferramentas do servidor ao modelo automaticamente.
-- **Hooks** (`hooks/hooks.json`, auto-descobertos) chamam scripts Node que falam
-  com a **API REST** do mesmo head:
+  Codex passa a expor as **32 tools** do servidor ao modelo automaticamente
+  (compose_recall, ingest_conversation, search_memory, ...). A URL fixa significa
+  que novas tools do servidor aparecem sem mudar o plugin.
+- **Hooks** (`hooks/hooks.json`, auto-descobertos) sao scripts Node que falam com
+  o mesmo head via REST **e** via MCP:
   - `SessionStart` → `scripts/session-start.mjs` → `/health` (avisa se cair).
-  - `UserPromptSubmit` → `scripts/recall.mjs` → `/api/v1/context` (auto-recall).
+  - `UserPromptSubmit` → `scripts/recall.mjs` → `/api/v1/context` (auto-recall do
+    acervo do time).
+  - `Stop` → `scripts/ingest-session.mjs` → tool MCP `ingest_conversation`
+    (auto-ingestao da sessao; alimenta a memoria de longo prazo e o "dreaming").
+
+> **Escopo do recall (importante):** o acervo plano do time (ex.: La Positiva) e
+> servido pela API REST `/api/v1/context`. As tools MCP `search_memory` /
+> `get_context` / `compose_recall` sao **project-scoped** e podem vir vazias para
+> esse acervo — por isso o auto-recall usa REST, nao as tools MCP.
 
 ---
 
@@ -81,10 +91,13 @@ por **variaveis de ambiente** (precedencia: env > arquivo > defaults):
 
 | Chave (arquivo) | Env override | Default | Descricao |
 |---|---|---|---|
-| `serverUrl` | `MEMORY_SERVER_URL` | `http://192.168.18.13:38080` | Base REST do head |
+| `serverUrl` | `MEMORY_SERVER_URL` | `http://192.168.18.13:38080` | Base REST/MCP do head |
 | `projectId` | `MEMORY_PROJECT_ID` | `la-positiva` | Projeto logico |
 | `recall.topK` | `MEMORY_TOP_K` | `6` | Itens no recall |
 | `recall.enabled` | `MEMORY_RECALL=off` | `true` | Liga/desliga auto-recall |
+| `ingest.enabled` | `MEMORY_INGEST=off` | `true` | Liga/desliga auto-ingestao da sessao |
+| `ingest.consumerId` | `MEMORY_CONSUMER_ID` | `codex-<hostname>` | Identifica a origem na ingestao |
+| `ingest.maxCharsPerBatch` | — | `60000` | Teto por lote enviado ao `ingest_conversation` |
 | `bearerTokenEnvVar` | (nomeia a env do token) | `MEMORY_BEARER_TOKEN` | Auth opcional (ver abaixo) |
 
 **Trocar o endereco do servidor:** edite `serverUrl` em `config/memory.config.json`
@@ -100,12 +113,16 @@ ao bloco do servidor em `.mcp.json`.
 
 ## O que o plugin entrega
 
-### Hooks (auto-recall + saude)
+### Hooks (auto-recall + saude + auto-ingestao)
 - **SessionStart** — verifica `/health`. Silencioso se OK; injeta aviso acionavel
   se o servidor estiver inacessivel.
 - **UserPromptSubmit** — busca contexto em `/api/v1/context` e injeta no turno.
   Prompt curto ou recall desligado → silencio. Servidor fora do ar → 1 aviso por
   cooldown (nao polui).
+- **Stop** — ingere a sessao na memoria via a tool MCP `ingest_conversation`.
+  Le o rollout `.jsonl` do Codex, extrai so as mensagens novas (offset por sessao),
+  normaliza para `{id, role, text}` e envia. A curadoria roda em background no
+  servidor. Desligavel com `MEMORY_INGEST=off`.
 
 ### Comandos
 - `/memory-doctor` — diagnostico completo da conexao.

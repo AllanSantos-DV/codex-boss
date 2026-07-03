@@ -14,6 +14,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -47,6 +48,13 @@ const DEFAULTS = {
     maxChars: 1800,
     minQueryChars: 8,
     downWarnCooldownMs: 120000,
+  },
+  ingest: {
+    enabled: true,
+    minChars: 80,
+    maxCharsPerBatch: 60000,
+    timeoutMs: 15000,
+    consumerId: '',
   },
   health: {
     timeoutMs: 5000,
@@ -96,6 +104,18 @@ export function loadConfig() {
   const recallFlag = (process.env.MEMORY_RECALL || '').toLowerCase();
   if (recallFlag === '0' || recallFlag === 'off' || recallFlag === 'false') {
     cfg.recall.enabled = false;
+  }
+  const ingestFlag = (process.env.MEMORY_INGEST || '').toLowerCase();
+  if (ingestFlag === '0' || ingestFlag === 'off' || ingestFlag === 'false') {
+    cfg.ingest.enabled = false;
+  }
+  if (process.env.MEMORY_CONSUMER_ID) cfg.ingest.consumerId = process.env.MEMORY_CONSUMER_ID;
+
+  // consumerId estavel por maquina quando nao configurado (identifica a origem Codex)
+  if (!cfg.ingest.consumerId) {
+    let host = 'unknown';
+    try { host = os.hostname() || 'unknown'; } catch { /* mantem unknown */ }
+    cfg.ingest.consumerId = `codex-${host}`;
   }
 
   // token bearer (opcional; rede fechada hoje nao usa auth)

@@ -1,6 +1,6 @@
 {
   "name": "codex-boss",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bridge de memoria semantica do time para o Codex CLI: conecta no servidor MCP (native-java, GPU) via HTTP, com auto-recall de contexto e ferramentas de diagnostico. Nao sobe jar local — aponta para o head HTTP da equipe.",
   "author": {
     "name": "Allan Santos",
