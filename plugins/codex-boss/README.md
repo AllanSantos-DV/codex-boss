@@ -42,10 +42,13 @@ flowchart LR
   - `Stop` → `scripts/ingest-session.mjs` → tool MCP `ingest_conversation`
     (auto-ingestao da sessao; alimenta a memoria de longo prazo e o "dreaming").
 
-> **Escopo do recall (importante):** o acervo plano do time (ex.: La Positiva) e
-> servido pela API REST `/api/v1/context`. As tools MCP `search_memory` /
-> `get_context` / `compose_recall` sao **project-scoped** e podem vir vazias para
-> esse acervo — por isso o auto-recall usa REST, nao as tools MCP.
+> **Escopo do recall:** o auto-recall e **escopado ao projeto do time** via
+> `metadata.project_id` (config `projectId`, default `la-positiva`) — tanto o REST
+> `/api/v1/context` quanto as tools MCP `search_memory`/`get_context` filtram por
+> esse campo. O hook usa REST porque o Codex so dispara hooks
+> `command`/`prompt`/`agent` (nao ha hook que chame uma tool MCP direto), nao por
+> questao de escopo. Nas chamadas MCP **manuais**, passe `metadata:{project_id}`
+> para receber o mesmo acervo. Com `projectId` vazio, o recall e abrangente.
 
 ---
 

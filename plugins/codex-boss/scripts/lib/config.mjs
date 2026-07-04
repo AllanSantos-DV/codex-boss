@@ -96,7 +96,9 @@ export function loadConfig() {
 
   // overrides por ambiente
   if (process.env.MEMORY_SERVER_URL) cfg.serverUrl = process.env.MEMORY_SERVER_URL;
-  if (process.env.MEMORY_PROJECT_ID) cfg.projectId = process.env.MEMORY_PROJECT_ID;
+  // MEMORY_PROJECT_ID: honra a var quando DEFINIDA, mesmo vazia (permite forcar recall
+  // abrangente com MEMORY_PROJECT_ID=""). Ausente => mantem o valor do arquivo/default.
+  if (process.env.MEMORY_PROJECT_ID !== undefined) cfg.projectId = process.env.MEMORY_PROJECT_ID;
   if (process.env.MEMORY_TOP_K) {
     const n = Number(process.env.MEMORY_TOP_K);
     if (Number.isFinite(n) && n > 0) cfg.recall.topK = n;

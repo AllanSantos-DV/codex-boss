@@ -21,18 +21,22 @@ Este plugin conecta o Codex ao **servidor de memoria do time** (GPU, native-java
 ## Importante sobre as ferramentas MCP `memory`
 
 O servidor expoe varias tools MCP (search_memory, get_context, compose_recall,
-add_document, ...). **Atencao ao escopo:**
+add_document, ...). **O acervo do time e escopado por projeto** (campo
+`metadata.project_id`):
 
-- O **acervo de conhecimento do time** (documentos da base, ex.: La Positiva /
-  InsureMO) e entregue pelo **auto-recall** (via a API REST do servidor). As tools
-  MCP `search_memory` / `get_context` / `compose_recall` sao **escopadas por
-  projeto** e, por padrao, **NAO retornam** esse acervo plano — podem responder
-  "sem contexto" mesmo havendo conhecimento. **Nao conclua que o time nao tem
-  informacao** so porque uma busca MCP veio vazia: confie no bloco de contexto ja
-  injetado no seu prompt, ou rode `/memory-search`.
-- Use as tools MCP para o que elas foram feitas: `compose_recall` traz memoria
-  **procedural/skills** por relevancia (incluindo itens promovidos pelo
-  "dreaming"); `add_document` grava conhecimento novo; as demais conforme a necessidade.
+- O **auto-recall** (a cada prompt) ja envia o `project_id` do time
+  automaticamente — o bloco `[CODEX-BOSS] Contexto recuperado...` ja vem
+  escopado ao acervo do time. Confie nele.
+- Ao chamar as tools MCP **manualmente**, passe o filtro de projeto para receber
+  o acervo do time, por exemplo:
+  `search_memory({ query: "...", metadata: { project_id: "la-positiva" } })`
+  ou `get_context({ query: "...", metadata: { project_id: "la-positiva" } })`.
+  **Sem** esse filtro a busca e abrangente (pode misturar projetos ou vir vazia
+  para o acervo do time). Ajuste o `project_id` ao projeto em uso.
+- `compose_recall` traz memoria **procedural/skills** por relevancia (incluindo
+  itens promovidos pelo "dreaming"); `add_document` grava conhecimento novo.
+- Se uma busca MCP vier vazia, **nao conclua** que o time nao sabe: confirme com
+  o contexto ja injetado no prompt, ou rode `/memory-search` (REST ja escopada).
 
 ## Quando agir
 

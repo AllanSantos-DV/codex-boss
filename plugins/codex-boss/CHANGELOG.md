@@ -2,6 +2,48 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/).
 
+## [0.3.0] — 2026-07-03
+
+Escopo de projeto no auto-recall (client-side, sem qualquer mudanca no servidor).
+
+### Adicionado
+- **Recall escopado por projeto.** `getContext`/`search` agora enviam
+  `metadata: { project_id: <cfg.projectId> }` no corpo das chamadas REST
+  (`/api/v1/context` e `/api/v1/search`). O servidor ja filtra por
+  `metadata.project_id` nativamente — o auto-recall passa a trazer o acervo do
+  **projeto do time** em vez de resultados abrangentes.
+- `scripts/selftest-scope.mjs`: teste unitario (mock de `fetch`) que prova o
+  filtro presente com `projectId` e ausente quando vazio/whitespace/null.
+  Ligado ao `npm test`.
+
+### Corrigido / Guia
+- `skills/memory/SKILL.md`: orienta o modelo a passar
+  `metadata: { project_id: "..." }` nas chamadas MCP **manuais**
+  (`search_memory`/`get_context`) para receber o acervo do time.
+- `README.md` e `scripts/doctor.mjs`: corrigida a nota de escopo que dizia
+  (desatualizada) que `/api/v1/context` era global e as tools MCP vinham vazias.
+  A verdade: **REST e tools MCP filtram pelo mesmo `metadata.project_id`**; o hook
+  usa REST apenas porque o Codex nao tem hook que chame tool MCP direto.
+- `scripts/lib/config.mjs`: `MEMORY_PROJECT_ID` passa a ser honrada quando
+  **definida**, mesmo vazia (`MEMORY_PROJECT_ID=""` forca recall abrangente).
+
+### Notas
+- **Nenhuma alteracao no servidor** (`native-java` permanece na 2.11.5 publicada;
+  o head em producao roda 2.11.3). O escopo ja e nativo por `metadata.project_id`.
+- **Verificado no servidor real da equipe (2.11.3, 192.168.18.13):** REST
+  `/api/v1/context` honra `metadata.project_id`; a base esta 100% tagueada
+  `la-positiva` — recall escopado retorna a base (18.901 chars), `project_id`
+  inexistente retorna vazio. Confirma o comportamento client-side.
+- **Ingestao NAO e escopada por projeto** (limitacao de servidor, fora deste
+  release): a tool `ingest_conversation` aceita apenas `consumerId`/`sessionId`/
+  `raw` — **nao** aceita `project_id`. Logo, sessoes auto-ingeridas pelo plugin
+  caem no projeto default do servidor, nao em `la-positiva`. Escopar a ingestao
+  exigiria evoluir o servidor (`native-java`), o que fica para um trabalho futuro.
+- Guard: `projectId` vazio/whitespace/null => recall abrangente (sem filtro),
+  evitando um filtro vazio que zeraria os resultados.
+- `project_id` configuravel por `MEMORY_PROJECT_ID` (env) ou
+  `config/memory.config.json` (default `la-positiva`).
+
 ## [0.2.0] — 2026-07-03
 
 Alinhamento com a evolucao do servidor (native-java 2.11.5): ingestao de sessao,

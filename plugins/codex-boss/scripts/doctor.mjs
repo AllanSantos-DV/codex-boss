@@ -147,12 +147,13 @@ async function runChecks() {
     add('mcp tools/list', false, `nao foi possivel listar tools: ${tl.error || `HTTP ${tl.status}`}`);
   }
 
-  // nota de escopo: recall do acervo do time e via REST /context (as tools MCP sao project-scoped)
+  // nota de escopo: recall e escopado ao projeto via metadata.project_id (REST e tools MCP filtram igual)
   add(
     'nota de recall',
     true,
-    'acervo do time e servido por /api/v1/context (REST); tools MCP (search_memory/get_context/' +
-      'compose_recall) sao project-scoped e podem vir vazias para o acervo plano — isso e esperado.',
+    'auto-recall escopado ao projeto via metadata.project_id (config projectId); REST ' +
+      '/api/v1/context e as tools MCP (search_memory/get_context) filtram pelo mesmo campo. ' +
+      'Sem project_id => recall abrangente.',
   );
 
   return { cfg, checks };

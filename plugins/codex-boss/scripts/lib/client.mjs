@@ -58,19 +58,28 @@ export async function health(cfg) {
 
 export async function getContext(query, cfg) {
   const c = cfg || loadConfig();
+  const body = { query, topK: c.recall.topK };
+  // Escopo de projeto: o servidor (REST /api/v1/context e as tools MCP) filtra por
+  // metadata.project_id. Enviamos o filtro SO quando ha projectId nao-vazio; vazio =>
+  // recall abrangente (global). Guard contra virar um filtro vazio que zera tudo.
+  const pid = c.projectId != null && String(c.projectId).trim();
+  if (pid) body.metadata = { project_id: pid };
   return request('/api/v1/context', {
     method: 'POST',
     cfg: c,
-    body: { query, topK: c.recall.topK },
+    body,
   });
 }
 
 export async function search(query, cfg) {
   const c = cfg || loadConfig();
+  const body = { query, topK: c.recall.topK };
+  const pid = c.projectId != null && String(c.projectId).trim();
+  if (pid) body.metadata = { project_id: pid };
   return request('/api/v1/search', {
     method: 'POST',
     cfg: c,
-    body: { query, topK: c.recall.topK },
+    body,
   });
 }
 
